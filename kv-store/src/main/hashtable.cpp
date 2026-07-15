@@ -1,6 +1,6 @@
 #include "hashtable.hpp"
 #include <iostream>
-#include <algorithm>
+#include <string>
 
 uint64_t HashTable::fnv1a_hash(const std::string& key) {
     uint64_t hash = FNV_offset_basis;
@@ -41,4 +41,25 @@ std::optional<std::string> HashTable::get(const std::string& key) {
         }
     }
     return std::nullopt;
+}
+
+bool HashTable::remove(const std::string& key) {
+    uint64_t index = fnv1a_hash(key);
+    index %= bucketCount;
+
+    auto& bucket = buckets[index];
+
+    for (auto it = bucket.begin(); it != bucket.end(); ) {
+        if (it->first == key) {
+            it = bucket.erase(it);
+            return true;
+        } else {
+            ++it;
+        }
+    }
+    return false;
+}
+
+bool HashTable::exists(const std::string& key) {
+    return get(key).has_value();
 }
