@@ -2,17 +2,24 @@
 #define HASHTABLE_HPP
 #include <iostream>
 #include <cstdint>
+#include <vector>
+#include <optional>
 
 inline constexpr uint64_t FNV_offset_basis = 0xcbf29ce484222325;
 inline constexpr uint64_t FNV_prime        = 0x100000001b3;
 
-inline uint64_t fnv1a_hash(const std::string& key) {
-    uint64_t hash = FNV_offset_basis;
-    for (unsigned char c : key) {
-        hash ^= c;
-        hash *= FNV_prime;
-    }
-    return hash;
-}
+class HashTable {
+private:
+    int bucketCount;
+    std::vector<std::vector<std::pair<std::string, std::string>>> buckets;
+
+    uint64_t fnv1a_hash(const std::string& key);
+
+public:
+    HashTable();
+
+    void insert(const std::string& key, const std::string& value);
+    std::optional<std::string> get(const std::string& key);
+};
 
 #endif
